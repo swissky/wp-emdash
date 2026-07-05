@@ -88,6 +88,7 @@ Full ACF support. Field groups are analyzed, and field values are exported with 
 * New `/comments` endpoint: exports approved and pending comments (authors, dates, threading) for import into EmDash's native comment system
 * Site identity in `/options`: custom logo and site icon with resolved URLs, so EmDash can take over title, tagline, logo, and favicon
 * Wizard overview now lists comments and site identity as migrated
+* `/taxonomies` now includes each taxonomy's singular label and registered post types, so EmDash can auto-create custom post type taxonomies scoped to the right collections
 
 = 1.1.0 =
 * Guided migration wizard under Tools → EmDash Migration with preflight site checks (permalinks, REST loopback, Authorization header, Application Passwords, reachability)

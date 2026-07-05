@@ -347,7 +347,9 @@ class EmDash_Exporter_REST_Controller {
             $result[] = [
                 'name' => $taxonomy->name,
                 'label' => $taxonomy->label,
+                'label_singular' => $taxonomy->labels->singular_name ?? $taxonomy->label,
                 'hierarchical' => $taxonomy->hierarchical,
+                'post_types' => array_values((array) $taxonomy->object_type),
                 'terms' => $term_data,
             ];
         }
