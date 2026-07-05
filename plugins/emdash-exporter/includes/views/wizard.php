@@ -113,7 +113,10 @@ defined('ABSPATH') || exit;
 						<?php esc_html_e('Deploy to Cloudflare', 'emdash-exporter'); ?>
 					</a>
 					<p class="description">
-						<?php esc_html_e('Requires the Cloudflare Workers Paid plan ($5/month) — the template uses Dynamic Workers for EmDash\'s plugin sandbox, which fails with an HTTP 400 on the Free plan. Free-plan alternative: fork the template, comment out the worker_loaders block in wrangler.jsonc, and deploy from your fork.', 'emdash-exporter'); ?>
+						<?php esc_html_e('Requires the Cloudflare Workers Paid plan ($5/month) for EmDash\'s plugin sandbox. On the Free plan: fork the template, comment out the worker_loaders block in wrangler.jsonc, and deploy from your fork.', 'emdash-exporter'); ?>
+					</p>
+					<p class="description">
+						<?php esc_html_e('If the deploy fails with HTTP 400, a resource from an earlier attempt may already exist on your account — check for a Worker, D1 database, R2 bucket, or KV namespace (including one titled "SESSION") with a conflicting name, then rename or delete it and retry.', 'emdash-exporter'); ?>
 					</p>
 					<p class="description">
 						<a href="<?php echo esc_url(EmDash_Admin_Page::TEMPLATES_URL); ?>" target="_blank" rel="noopener"><?php esc_html_e('Other templates (marketing, portfolio, starter)', 'emdash-exporter'); ?></a>
@@ -142,6 +145,10 @@ defined('ABSPATH') || exit;
 						<?php if ($overview['menu_count'] > 0) : ?>
 							<li><?php esc_html_e('Navigation menus', 'emdash-exporter'); ?> <span class="emdash-count"><?php echo esc_html(number_format_i18n($overview['menu_count'])); ?></span></li>
 						<?php endif; ?>
+						<?php if ($overview['comment_count'] > 0) : ?>
+							<li><?php esc_html_e('Comments', 'emdash-exporter'); ?> <span class="emdash-count"><?php echo esc_html(number_format_i18n($overview['comment_count'])); ?></span></li>
+						<?php endif; ?>
+						<li><?php esc_html_e('Site title, tagline, logo, and favicon', 'emdash-exporter'); ?></li>
 						<?php if ($overview['acf']) : ?>
 							<li><?php esc_html_e('ACF custom fields', 'emdash-exporter'); ?></li>
 						<?php endif; ?>
@@ -175,7 +182,6 @@ defined('ABSPATH') || exit;
 								);
 							?></li>
 						<?php endif; ?>
-						<li><?php esc_html_e('Comments', 'emdash-exporter'); ?></li>
 						<li><?php esc_html_e('Installed plugins, themes, and their settings', 'emdash-exporter'); ?></li>
 						<li><?php esc_html_e('WooCommerce orders and customers', 'emdash-exporter'); ?></li>
 						<li><?php esc_html_e('Users and passwords (authors are recreated as bylines)', 'emdash-exporter'); ?></li>

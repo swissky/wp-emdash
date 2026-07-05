@@ -178,6 +178,7 @@ class EmDash_Admin_Page {
             'taxonomies' => $taxonomies,
             'media_count' => (int) wp_count_posts('attachment')->inherit,
             'menu_count' => count(wp_get_nav_menus()),
+            'comment_count' => EmDash_Comment_Exporter::count(),
             'acf' => class_exists('ACF'),
             'yoast' => defined('WPSEO_VERSION'),
             'rankmath' => class_exists('RankMath'),

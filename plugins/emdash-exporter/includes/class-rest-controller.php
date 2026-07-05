@@ -126,6 +126,25 @@ class EmDash_Exporter_REST_Controller {
             'permission_callback' => [$this, 'check_permission'],
         ]);
         
+        register_rest_route(self::NAMESPACE, '/comments', [
+            'methods' => 'GET',
+            'callback' => [$this, 'get_comments'],
+            'permission_callback' => [$this, 'check_permission'],
+            'args' => [
+                'per_page' => [
+                    'type' => 'integer',
+                    'default' => 500,
+                    'minimum' => 1,
+                    'maximum' => 500,
+                ],
+                'page' => [
+                    'type' => 'integer',
+                    'default' => 1,
+                    'minimum' => 1,
+                ],
+            ],
+        ]);
+        
         // Public: reflects whether the Authorization header reaches PHP.
         // Used by the wizard's loopback health check (some Apache/CGI setups
         // strip the header, which silently breaks Application Passwords).
@@ -177,6 +196,17 @@ class EmDash_Exporter_REST_Controller {
     public function get_menus() {
         $exporter = new EmDash_Menu_Exporter();
         return $exporter->get_menus();
+    }
+    
+    /**
+     * Get comments (approved + pending), paginated
+     */
+    public function get_comments($request) {
+        $exporter = new EmDash_Comment_Exporter();
+        return $exporter->get_comments(
+            $request->get_param('per_page'),
+            $request->get_param('page')
+        );
     }
     
     /**
@@ -234,6 +264,7 @@ class EmDash_Exporter_REST_Controller {
                 'taxonomies' => rest_url(self::NAMESPACE . '/taxonomies'),
                 'options' => rest_url(self::NAMESPACE . '/options'),
                 'menus' => rest_url(self::NAMESPACE . '/menus'),
+                'comments' => rest_url(self::NAMESPACE . '/comments'),
             ],
             'auth_instructions' => $this->get_auth_instructions(),
         ]);
@@ -351,6 +382,25 @@ class EmDash_Exporter_REST_Controller {
         $options = [];
         foreach ($option_keys as $key) {
             $options[$key] = get_option($key);
+        }
+        
+        // Site identity media (Customizer logo + site icon), with resolved
+        // URLs so the importer can side-load the files.
+        $custom_logo = (int) get_theme_mod('custom_logo');
+        if ($custom_logo) {
+            $logo_url = wp_get_attachment_url($custom_logo);
+            if ($logo_url) {
+                $options['custom_logo'] = $custom_logo;
+                $options['custom_logo_url'] = $logo_url;
+            }
+        }
+        $site_icon = (int) get_option('site_icon');
+        if ($site_icon) {
+            $icon_url = wp_get_attachment_url($site_icon);
+            if ($icon_url) {
+                $options['site_icon'] = $site_icon;
+                $options['site_icon_url'] = $icon_url;
+            }
         }
         
         // Include Yoast settings if available

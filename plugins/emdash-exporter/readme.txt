@@ -4,7 +4,7 @@ Tags: export, migration, cms, emdash, astro
 Requires at least: 5.6
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPL3
 License URI: https://opensource.org/license/gpl-3.0
 
@@ -83,6 +83,11 @@ Yes! All public post types are automatically included, along with their custom f
 Full ACF support. Field groups are analyzed, and field values are exported with proper type information.
 
 == Changelog ==
+
+= 1.2.0 =
+* New `/comments` endpoint: exports approved and pending comments (authors, dates, threading) for import into EmDash's native comment system
+* Site identity in `/options`: custom logo and site icon with resolved URLs, so EmDash can take over title, tagline, logo, and favicon
+* Wizard overview now lists comments and site identity as migrated
 
 = 1.1.0 =
 * Guided migration wizard under Tools → EmDash Migration with preflight site checks (permalinks, REST loopback, Authorization header, Application Passwords, reachability)

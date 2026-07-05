@@ -3,23 +3,24 @@
  * Plugin Name: EmDash Exporter
  * Plugin URI: https://github.com/emdash-cms/wp-emdash
  * Description: Migrate your WordPress content to EmDash CMS with a guided wizard and one-click migration key
- * Version: 1.1.0
+ * Version: 1.2.0
  * Requires at least: 5.6
  * Requires PHP: 7.4
- * Author: Matt Kane
+ * Author: EmDash
  * License: GPL3
  * Text Domain: emdash-exporter
  */
 
 defined('ABSPATH') || exit;
 
-define('EMDASH_EXPORTER_VERSION', '1.1.0');
+define('EMDASH_EXPORTER_VERSION', '1.2.0');
 define('EMDASH_EXPORTER_PATH', plugin_dir_path(__FILE__));
 
 require_once EMDASH_EXPORTER_PATH . 'includes/class-rest-controller.php';
 require_once EMDASH_EXPORTER_PATH . 'includes/class-content-exporter.php';
 require_once EMDASH_EXPORTER_PATH . 'includes/class-media-exporter.php';
 require_once EMDASH_EXPORTER_PATH . 'includes/class-menu-exporter.php';
+require_once EMDASH_EXPORTER_PATH . 'includes/class-comment-exporter.php';
 require_once EMDASH_EXPORTER_PATH . 'includes/class-i18n-exporter.php';
 require_once EMDASH_EXPORTER_PATH . 'includes/class-health-check.php';
 require_once EMDASH_EXPORTER_PATH . 'includes/class-migration-key.php';
