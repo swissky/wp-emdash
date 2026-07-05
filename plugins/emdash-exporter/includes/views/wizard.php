@@ -113,6 +113,9 @@ defined('ABSPATH') || exit;
 						<?php esc_html_e('Deploy to Cloudflare', 'emdash-exporter'); ?>
 					</a>
 					<p class="description">
+						<?php esc_html_e('Requires the Cloudflare Workers Paid plan ($5/month) — the template uses Dynamic Workers for EmDash\'s plugin sandbox, which fails with an HTTP 400 on the Free plan. Free-plan alternative: fork the template, comment out the worker_loaders block in wrangler.jsonc, and deploy from your fork.', 'emdash-exporter'); ?>
+					</p>
+					<p class="description">
 						<a href="<?php echo esc_url(EmDash_Admin_Page::TEMPLATES_URL); ?>" target="_blank" rel="noopener"><?php esc_html_e('Other templates (marketing, portfolio, starter)', 'emdash-exporter'); ?></a>
 					</p>
 					<p><?php esc_html_e('After deployment:', 'emdash-exporter'); ?></p>
