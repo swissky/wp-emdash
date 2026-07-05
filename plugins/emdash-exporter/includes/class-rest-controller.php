@@ -119,28 +119,64 @@ class EmDash_Exporter_REST_Controller {
             'callback' => [$this, 'get_options'],
             'permission_callback' => [$this, 'check_permission'],
         ]);
+        
+        register_rest_route(self::NAMESPACE, '/menus', [
+            'methods' => 'GET',
+            'callback' => [$this, 'get_menus'],
+            'permission_callback' => [$this, 'check_permission'],
+        ]);
+        
+        // Public: reflects whether the Authorization header reaches PHP.
+        // Used by the wizard's loopback health check (some Apache/CGI setups
+        // strip the header, which silently breaks Application Passwords).
+        register_rest_route(self::NAMESPACE, '/header-check', [
+            'methods' => 'GET',
+            'callback' => [$this, 'header_check'],
+            'permission_callback' => '__return_true',
+        ]);
     }
     
     /**
-     * Check if user has permission to export
+     * Check if user has permission to export.
+     *
+     * Requires the `export` capability (Administrators and Editors). The
+     * export exposes all content including drafts, private posts, author
+     * emails, and site options -- `edit_posts` (Contributors) is not enough.
      */
     public function check_permission() {
-        // Allow if user is logged in and can export
         if (current_user_can('export')) {
-            return true;
-        }
-        
-        // Check for Application Password authentication
-        // WordPress 5.6+ supports this natively
-        if (is_user_logged_in() && current_user_can('edit_posts')) {
             return true;
         }
         
         return new WP_Error(
             'rest_forbidden',
             __('You must be authenticated with export permissions.', 'emdash-exporter'),
-            ['status' => 401]
+            ['status' => rest_authorization_required_code()]
         );
+    }
+    
+    /**
+     * Header check endpoint - reports whether an Authorization header arrived
+     */
+    public function header_check() {
+        $header = null;
+        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $header = $_SERVER['HTTP_AUTHORIZATION'];
+        } elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+            $header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        }
+        
+        return [
+            'authorization_header_received' => !empty($header),
+        ];
+    }
+    
+    /**
+     * Get all navigation menus
+     */
+    public function get_menus() {
+        $exporter = new EmDash_Menu_Exporter();
+        return $exporter->get_menus();
     }
     
     /**
@@ -169,7 +205,9 @@ class EmDash_Exporter_REST_Controller {
         $has_yoast = defined('WPSEO_VERSION');
         $has_rankmath = class_exists('RankMath');
         
-        return [
+        $i18n = EmDash_I18n_Exporter::site_info();
+        
+        return array_merge($i18n ? ['i18n' => $i18n] : [], [
             'emdash_exporter' => EMDASH_EXPORTER_VERSION,
             'wordpress_version' => get_bloginfo('version'),
             'site' => [
@@ -188,15 +226,17 @@ class EmDash_Exporter_REST_Controller {
             ],
             'post_types' => $post_type_info,
             'media_count' => (int) wp_count_posts('attachment')->inherit,
+            'menu_count' => count(wp_get_nav_menus()),
             'endpoints' => [
                 'analyze' => rest_url(self::NAMESPACE . '/analyze'),
                 'content' => rest_url(self::NAMESPACE . '/content'),
                 'media' => rest_url(self::NAMESPACE . '/media'),
                 'taxonomies' => rest_url(self::NAMESPACE . '/taxonomies'),
                 'options' => rest_url(self::NAMESPACE . '/options'),
+                'menus' => rest_url(self::NAMESPACE . '/menus'),
             ],
             'auth_instructions' => $this->get_auth_instructions(),
-        ];
+        ]);
     }
     
     /**
