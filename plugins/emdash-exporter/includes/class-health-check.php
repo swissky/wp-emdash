@@ -130,7 +130,13 @@ class EmDash_Health_Check {
         $response = wp_remote_get(rest_url('emdash/v1/header-check'), [
             'timeout' => 10,
             'sslverify' => false,
-            'headers' => ['Authorization' => 'Basic ' . base64_encode('emdash:header-check')],
+            // Custom scheme on purpose: a Basic header with fake credentials
+            // would trigger Application Password validation (rejecting the
+            // whole REST request if an 'emdash' user exists) and can count as
+            // a failed login for brute-force protection plugins. A Bearer
+            // token could collide with JWT/OAuth plugins the same way. We
+            // only test whether the header string survives the server config.
+            'headers' => ['Authorization' => 'EmDashCheck header-check'],
         ]);
 
         $label = __('Authorization header', 'emdash-exporter');

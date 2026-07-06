@@ -183,6 +183,15 @@ class EmDash_Exporter_REST_Controller {
             $header = $_SERVER['HTTP_AUTHORIZATION'];
         } elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
             $header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        } elseif (function_exists('getallheaders')) {
+            // mod_php can expose the header via the Apache API only,
+            // without populating $_SERVER['HTTP_AUTHORIZATION'].
+            foreach (getallheaders() as $name => $value) {
+                if (strtolower($name) === 'authorization') {
+                    $header = $value;
+                    break;
+                }
+            }
         }
         
         return [
